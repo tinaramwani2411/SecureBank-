@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank - Banking Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- ==================== AUTH PAGE ==================== -->
+<div class="auth-page">
+  <div class="auth-container">
+    <div class="auth-brand">
+      <div class="auth-brand-content">
+        <div class="auth-logo">Secure<span>Bank</span></div>
+        <div class="auth-tagline">Your Trusted Financial Partner</div>
+        <div class="auth-description">Experience next-generation digital banking with powerful tools to manage, grow, and protect your wealth.</div>
+        <div class="auth-features">
+          <div class="auth-feature"><span class="feature-icon">🔒</span> 256-bit encrypted banking</div>
+          <div class="auth-feature"><span class="feature-icon">⚡</span> Instant transfers & payments</div>
+          <div class="auth-feature"><span class="feature-icon">📊</span> Real-time analytics & insights</div>
+          <div class="auth-feature"><span class="feature-icon">💎</span> Premium loan offerings</div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-form-container">
+      <div class="auth-form-header">
+        <h2 id="authFormTitle">Welcome Back</h2>
+        <p id="authFormSubtitle">Sign in to your SecureBank account</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form" autocomplete="off">
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <div class="input-group">
+            <span class="input-icon">✉</span>
+            <input type="email" id="loginEmail" class="form-input" placeholder="admin@bank.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-group">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required>
+            <button type="button" class="password-toggle">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+        <div class="auth-switch">Don't have an account? <a id="showRegister">Create one</a></div>
+        <div style="margin-top:16px;padding:12px;background:#f1f5f9;border-radius:8px;font-size:13px;color:var(--text-light)">
+          <strong>Demo Credentials:</strong><br>
+          Admin: admin@bank.com / admin123<br>
+          User: john@example.com / user123
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="auth-form" autocomplete="off" style="display:none">
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" class="form-input" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" class="form-input" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="regPhone">Phone Number</label>
+          <input type="tel" id="regPhone" class="form-input" placeholder="9876543210" required>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <div class="input-group">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="regPassword" class="form-input" placeholder="Min. 6 characters" required>
+            <button type="button" class="password-toggle">👁</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regConfirm">Confirm Password</label>
+          <input type="password" id="regConfirm" class="form-input" placeholder="Re-enter password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+        <div class="auth-switch">Already have an account? <a id="showLogin">Sign in</a></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP LAYOUT ==================== -->
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">Secure<span>Bank</span></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarUserName">Admin</div>
+        <div class="sidebar-user-role" id="sidebarUserRole">Administrator</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main Menu</div>
+        <div class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span><span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-page="accounts">
+          <span class="nav-icon">🏦</span><span>Accounts</span>
+        </div>
+        <div class="nav-item" data-page="transactions">
+          <span class="nav-icon">💳</span><span>Transactions</span>
+        </div>
+        <div class="nav-item" data-page="loans">
+          <span class="nav-icon">💰</span><span>Loans</span>
+        </div>
+        <div class="nav-item" data-page="bills">
+          <span class="nav-icon">📄</span><span>Bill Pay</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Settings</div>
+        <div class="nav-item" data-page="profile">
+          <span class="nav-icon">👤</span><span>Profile</span>
+        </div>
+        <div class="nav-item" id="navAdmin" data-page="admin" style="display:none">
+          <span class="nav-icon">⚙</span><span>Admin</span>
+          <span class="nav-badge" id="adminBadge">1</span>
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="nav-item" data-page="logout">
+        <span class="nav-icon">🚪</span><span>Logout</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+    <header class="main-header">
+      <div class="main-header-left">
+        <button id="mobileToggle" class="mobile-toggle">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="main-header-right">
+        <span class="header-date" id="headerDate"></span>
+        <button class="header-notif" id="notifBtn">
+          🔔
+          <span class="notif-dot" id="notifDot"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+
+      <!-- ==================== DASHBOARD ==================== -->
+      <section id="page-dashboard" class="page-section active">
+        <div class="page-header">
+          <div>
+            <h2>Dashboard</h2>
+            <p>Your financial overview at a glance</p>
+          </div>
+          <div class="flex gap-3">
+            <button class="btn btn-primary" onclick="UI.openModal('depositModal')">+ Deposit</button>
+            <button class="btn btn-accent" onclick="UI.openModal('transferModal')">Transfer</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">💰</div>
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value" id="dashTotalBalance">₹0</div>
+            <div class="stat-change up">▲ All accounts combined</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">📈</div>
+            <div class="stat-label">Total Income</div>
+            <div class="stat-value" id="dashTotalIncome">₹0</div>
+            <div class="stat-change up">▲ Lifetime earnings</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">📉</div>
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value" id="dashTotalExpenses">₹0</div>
+            <div class="stat-change down">▼ Lifetime spending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon gold">🏆</div>
+            <div class="stat-label">Active Loans</div>
+            <div class="stat-value" id="dashActiveLoans">0</div>
+            <div class="stat-change up">▲ Currently active</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Income vs Expenses</div>
+                <div class="card-subtitle">Last 7 days overview</div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="dashChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Quick Actions</div>
+                <div class="card-subtitle">Frequently used operations</div>
+              </div>
+            </div>
+            <div class="quick-actions">
+              <button class="quick-action" onclick="UI.openModal('depositModal')">
+                <span class="qa-icon">💰</span> Deposit
+              </button>
+              <button class="quick-action" onclick="UI.openModal('withdrawModal')">
+                <span class="qa-icon">🏧</span> Withdraw
+              </button>
+              <button class="quick-action" onclick="UI.openModal('transferModal')">
+                <span class="qa-icon">↔</span> Transfer
+              </button>
+              <button class="quick-action" onclick="UI.openModal('applyLoanModal')">
+                <span class="qa-icon">🏠</span> Apply Loan
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Recent Transactions</div>
+                <div class="card-subtitle">Your latest account activity</div>
+              </div>
+              <button class="btn btn-sm btn-ghost" onclick="UI.navigateTo('transactions')">View All</button>
+            </div>
+            <div class="transaction-list" id="dashRecentTx"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ACCOUNTS ==================== -->
+      <section id="page-accounts" class="page-section">
+        <div class="page-header">
+          <div>
+            <h2>Your Accounts</h2>
+            <p>Manage all your banking accounts in one place</p>
+          </div>
+          <button class="btn btn-primary" onclick="UI.openModal('newAccountModal')">+ New Account</button>
+        </div>
+
+        <div class="accounts-grid" id="accountsGrid"></div>
+      </section>
+
+      <!-- ==================== TRANSACTIONS ==================== -->
+      <section id="page-transactions" class="page-section">
+        <div class="page-header">
+          <div>
+            <h2>Transaction History</h2>
+            <p>View and filter all your transactions</p>
+          </div>
+          <div class="flex gap-3">
+            <button class="btn btn-primary" onclick="UI.openModal('depositModal')">+ Deposit</button>
+            <button class="btn btn-accent" onclick="UI.openModal('transferModal')">Transfer</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="transaction-filters">
+            <select id="txTypeFilter" class="form-select" style="min-width:140px">
+              <option value="all">All Types</option>
+              <option value="credit">Credits</option>
+              <option value="debit">Debits</option>
+            </select>
+            <select id="txAccountFilter" class="form-select" style="min-width:140px">
+              <option value="all">All Accounts</option>
+            </select>
+            <input type="text" id="txSearch" class="form-input" placeholder="Search transactions..." style="min-width:200px">
+          </div>
+          <div class="transaction-list" id="transactionsList"></div>
+        </div>
+      </section>
+
+      <!-- ==================== LOANS ==================== -->
+      <section id="page-loans" class="page-section">
+        <div class="page-header">
+          <div>
+            <h2>Loan Services</h2>
+            <p>Apply for loans and track your applications</p>
+          </div>
+          <button class="btn btn-primary" onclick="UI.openModal('applyLoanModal')">+ Apply for Loan</button>
+        </div>
+
+        <div class="loans-grid" id="loansGrid"></div>
+
+        <div class="card" style="margin-top:24px">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Available Loan Products</div>
+              <div class="card-subtitle">Choose the loan that fits your needs</div>
+            </div>
+          </div>
+          <div class="loan-types-grid" id="loanTypesGrid"></div>
+        </div>
+      </section>
+
+      <!-- ==================== BILL PAY ==================== -->
+      <section id="page-bills" class="page-section">
+        <div class="page-header">
+          <div>
+            <h2>Bill Payments</h2>
+            <p>Pay your bills quickly and securely</p>
+          </div>
+          <div class="flex gap-3">
+            <button class="btn btn-primary" onclick="UI.openModal('addBillModal')">+ Add Bill</button>
+            <button class="btn btn-accent" onclick="UI.openPayBillModal()">Pay Bill</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="transaction-list" id="billsList"></div>
+        </div>
+      </section>
+
+      <!-- ==================== PROFILE ==================== -->
+      <section id="page-profile" class="page-section">
+        <div class="page-header">
+          <div>
+            <h2>Profile Settings</h2>
+            <p>Manage your personal information and security</p>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+          <div class="card">
+            <div class="profile-header">
+              <div class="profile-avatar" id="profileAvatar">A</div>
+              <div class="profile-info">
+                <h2 id="profileName">Admin User</h2>
+                <p id="profileEmail">admin@bank.com</p>
+                <p><span class="badge badge-info" id="profileRole">Administrator</span> · Member since <span id="profileMemberSince">January 2026</span></p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Edit Profile</div>
+            </div>
+            <form id="profileForm">
+              <div class="form-group">
+                <label for="editName">Full Name</label>
+                <input type="text" id="editName" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="editPhone">Phone Number</label>
+                <input type="tel" id="editPhone" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="editAddress">Address</label>
+                <textarea id="editAddress" class="form-textarea"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Change Password</div>
+            </div>
+            <form id="changePasswordForm">
+              <div class="form-group">
+                <label for="oldPassword">Current Password</label>
+                <div class="input-group">
+                  <span class="input-icon">🔑</span>
+                  <input type="password" id="oldPassword" class="form-input" required>
+                  <button type="button" class="password-toggle">👁</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <div class="input-group">
+                  <span class="input-icon">🔑</span>
+                  <input type="password" id="newPassword" class="form-input" required>
+                  <button type="button" class="password-toggle">👁</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirm New Password</label>
+                <input type="password" id="confirmPassword" class="form-input" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Update Password</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ADMIN ==================== -->
+      <section id="page-admin" class="page-section">
+        <div class="page-header">
+          <div>
+            <h2>Admin Dashboard</h2>
+            <p>System-wide management and monitoring</p>
+          </div>
+        </div>
+
+        <div class="admin-stats">
+          <div class="admin-stat">
+            <div class="admin-stat-value" id="adminTotalUsers">0</div>
+            <div class="admin-stat-label">Total Users</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-value" id="adminTotalAccounts">0</div>
+            <div class="admin-stat-label">Total Accounts</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-value" id="adminTotalTx">0</div>
+            <div class="admin-stat-label">Transactions</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-value" id="adminPendingLoans">0</div>
+            <div class="admin-stat-label">Pending Loans</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-value" id="adminTotalLoans">0</div>
+            <div class="admin-stat-label">Total Loans</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-value" id="adminTotalBalance">₹0</div>
+            <div class="admin-stat-label">Bank Balance</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header">
+            <div class="card-title">User Management</div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>Email</th><th>Role</th><th>Accounts</th><th>Total Balance</th><th>Status</th><th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersList"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header">
+            <div class="card-title">Loan Applications</div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th><th>Status</th><th>EMI</th><th>Action</th></tr>
+              </thead>
+              <tbody id="adminLoansList"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Transactions</div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>User</th><th>Description</th><th>Type</th><th>Amount</th><th>Date</th><th>Status</th></tr>
+              </thead>
+              <tbody id="adminTxList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Deposit Modal -->
+<div class="modal-overlay" id="depositModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Deposit Funds</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <form id="depositForm" class="modal-body">
+      <div class="form-group">
+        <label for="depositAccount">Select Account</label>
+        <select id="depositAccount" class="form-select" required></select>
+      </div>
+      <div class="form-group">
+        <label for="depositAmount">Amount (₹)</label>
+        <input type="number" id="depositAmount" class="form-input" placeholder="Enter amount" min="1" required>
+      </div>
+      <div class="form-group">
+        <label for="depositDescription">Description (optional)</label>
+        <input type="text" id="depositDescription" class="form-input" placeholder="e.g. Salary Credit">
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Deposit</button>
+    </form>
+  </div>
+</div>
+
+<!-- Withdraw Modal -->
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Withdraw Funds</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <form id="withdrawForm" class="modal-body">
+      <div class="form-group">
+        <label for="withdrawAccount">Select Account</label>
+        <select id="withdrawAccount" class="form-select" required></select>
+      </div>
+      <div class="form-group">
+        <label for="withdrawAmount">Amount (₹)</label>
+        <input type="number" id="withdrawAmount" class="form-input" placeholder="Enter amount" min="1" required>
+      </div>
+      <div class="form-group">
+        <label for="withdrawDescription">Description (optional)</label>
+        <input type="text" id="withdrawDescription" class="form-input" placeholder="e.g. ATM Withdrawal">
+      </div>
+      <button type="submit" class="btn btn-danger btn-lg" style="width:100%">Withdraw</button>
+    </form>
+  </div>
+</div>
+
+<!-- Transfer Modal -->
+<div class="modal-overlay" id="transferModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Transfer Money</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <form id="transferForm" class="modal-body">
+      <div class="form-group">
+        <label for="transferFromAccount">From Account</label>
+        <select id="transferFromAccount" class="form-select" required></select>
+      </div>
+      <div class="form-group">
+        <label for="transferToAccount">To Account Number</label>
+        <input type="text" id="transferToAccount" class="form-input" placeholder="e.g. XXXX9012" required>
+      </div>
+      <div class="form-group">
+        <label for="transferAmount">Amount (₹)</label>
+        <input type="number" id="transferAmount" class="form-input" placeholder="Enter amount" min="1" required>
+      </div>
+      <div class="form-group">
+        <label for="transferDescription">Description (optional)</label>
+        <input type="text" id="transferDescription" class="form-input" placeholder="e.g. Rent Payment">
+      </div>
+      <button type="submit" class="btn btn-accent btn-lg" style="width:100%">Transfer</button>
+    </form>
+  </div>
+</div>
+
+<!-- Apply Loan Modal -->
+<div class="modal-overlay" id="applyLoanModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Apply for a Loan</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <form id="applyLoanForm" class="modal-body">
+      <div class="form-group">
+        <label for="loanType">Loan Type</label>
+        <select id="loanType" class="form-select" required>
+          <option value="">Select loan type</option>
+          <option value="Personal Loan">Personal Loan - 10.5%</option>
+          <option value="Home Loan">Home Loan - 8.5%</option>
+          <option value="Car Loan">Car Loan - 9.5%</option>
+          <option value="Education Loan">Education Loan - 8.0%</option>
+          <option value="Business Loan">Business Loan - 12.0%</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="loanAmount">Loan Amount (₹)</label>
+        <input type="number" id="loanAmount" class="form-input" placeholder="Min. ₹10,000" min="10000" required>
+      </div>
+      <div class="form-group">
+        <label for="loanTenure">Tenure (months)</label>
+        <select id="loanTenure" class="form-select" required>
+          <option value="">Select tenure</option>
+          <option value="6">6 months</option>
+          <option value="12">12 months</option>
+          <option value="24">24 months</option>
+          <option value="36">36 months</option>
+          <option value="48">48 months</option>
+          <option value="60">60 months</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="loanPurpose">Purpose of Loan</label>
+        <textarea id="loanPurpose" class="form-textarea" placeholder="Describe the purpose of this loan" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Submit Application</button>
+    </form>
+  </div>
+</div>
+
+<!-- New Account Modal -->
+<div class="modal-overlay" id="newAccountModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Open New Account</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="newAccountType">Account Type</label>
+        <select id="newAccountType" class="form-select">
+          <option value="Savings">Savings Account</option>
+          <option value="Current">Current Account</option>
+          <option value="Fixed Deposit">Fixed Deposit Account</option>
+        </select>
+      </div>
+      <button id="createAccountBtn" class="btn btn-primary btn-lg" style="width:100%">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- Account Detail Modal -->
+<div class="modal-overlay" id="accountDetailModal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <div class="modal-title" id="accDetailType">Account Details</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+        <div>
+          <div style="font-size:13px;color:var(--text-light)">Account Number</div>
+          <div style="font-size:18px;font-weight:700;font-family:monospace;letter-spacing:2px" id="accDetailNumber">XXXX1234</div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--text-light)">Balance</div>
+          <div style="font-size:24px;font-weight:800;color:var(--primary)" id="accDetailBalance">₹0</div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--text-light)">Status</div>
+          <div><span id="accDetailStatus" class="badge badge-success">Active</span></div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--text-light)">Created</div>
+          <div style="font-size:14px;font-weight:600" id="accDetailCreated">Jan 2026</div>
+        </div>
+      </div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:12px">Recent Transactions</div>
+      <div id="accDetailTx"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Modal -->
+<div class="modal-overlay" id="notifModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div class="modal-title">Notifications <span class="badge badge-info" id="notifCount" style="margin-left:8px">0</span></div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body" id="notifList"></div>
+  </div>
+</div>
+
+<!-- Add Bill Modal -->
+<div class="modal-overlay" id="addBillModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New Bill</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <form id="addBillForm" class="modal-body">
+      <div class="form-group">
+        <label for="billType">Bill Type</label>
+        <select id="billType" class="form-select" required>
+          <option value="">Select type</option>
+          <option value="Electricity">Electricity</option>
+          <option value="Water">Water</option>
+          <option value="Internet">Internet</option>
+          <option value="Phone">Phone</option>
+          <option value="Credit Card">Credit Card</option>
+          <option value="Insurance">Insurance</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="billProvider">Provider Name</label>
+        <input type="text" id="billProvider" class="form-input" placeholder="e.g. Tata Power" required>
+      </div>
+      <div class="form-group">
+        <label for="billAmount">Amount (₹)</label>
+        <input type="number" id="billAmount" class="form-input" placeholder="Enter amount" min="1" required>
+      </div>
+      <div class="form-group">
+        <label for="billDueDate">Due Date</label>
+        <input type="date" id="billDueDate" class="form-input" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Add Bill</button>
+    </form>
+  </div>
+</div>
+
+<!-- Pay Bill Modal -->
+<div class="modal-overlay" id="payBillModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Pay a Bill</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <form id="payBillForm" class="modal-body">
+      <div class="form-group">
+        <label for="billSelect">Select Bill</label>
+        <select id="billSelect" class="form-select" required></select>
+      </div>
+      <div class="form-group">
+        <label for="payBillAccount">Pay From Account</label>
+        <select id="payBillAccount" class="form-select" required></select>
+      </div>
+      <button type="submit" class="btn btn-accent btn-lg" style="width:100%">Pay Now</button>
+    </form>
+  </div>
+</div>
+
+<!-- Approve Loan Modal -->
+<div class="modal-overlay" id="approveLoanModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Approve Loan</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <form id="approveLoanForm" class="modal-body">
+      <div style="margin-bottom:16px;font-size:14px;color:var(--text-light)" id="approveLoanInfo"></div>
+      <input type="hidden" id="approveLoanId">
+      <div class="form-group">
+        <label for="approveLoanAmount">Approved Amount (₹)</label>
+        <input type="number" id="approveLoanAmount" class="form-input" min="1" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Approve Loan</button>
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
